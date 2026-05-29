@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>我的存款 · My Savings</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&family=Noto+Serif+TC:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ============================================================
+     ⚙️  你只需要改這個區塊  /  YOU ONLY NEED TO EDIT THIS BLOCK
+     往下捲到 <script> 標籤裡的 CONFIG。
+     Scroll down to the CONFIG section inside the <script> tag.
+     ============================================================ */
+
+  :root{
+    --paper:    #f3ead9;
+    --paper-2:  #ece0c9;
+    --ink:      #2b2620;
+    --ink-soft: #6f655552;
+    --ink-mute: #7c7363;
+    --jade:     #2f6f5e;
+    --jade-deep:#234f43;
+    --gold:     #ae7a2e;
+    --line:     rgba(43,38,32,0.14);
+    --card:     #fbf6ec;
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+
+  html,body{ min-height:100%; }
+
+  body{
+    font-family:"Fraunces","Noto Serif TC",serif;
+    color:var(--ink);
+    background:
+      radial-gradient(ellipse 120% 90% at 50% -10%, #f7f0e1 0%, var(--paper) 42%, var(--paper-2) 100%);
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:28px 18px;
+    position:relative;
+    overflow-x:hidden;
+  }
+
+  /* faint paper grain */
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    pointer-events:none;
+    opacity:.5;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E");
+    mix-blend-mode:multiply;
+  }
+
+  .card{
+    position:relative;
+    width:100%;
+    max-width:520px;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:22px;
+    padding:46px 38px 30px;
+    box-shadow:
+      0 1px 0 rgba(255,255,255,.7) inset,
+      0 28px 60px -28px rgba(43,38,32,.42),
+      0 6px 16px -8px rgba(43,38,32,.25);
+    text-align:center;
+  }
+  /* thin inner keepsake rule */
+  .card::after{
+    content:"";
+    position:absolute; inset:11px;
+    border:1px solid var(--line);
+    border-radius:14px;
+    pointer-events:none;
+  }
+
+  .seal{
+    width:58px; height:58px;
+    margin:0 auto 22px;
+    border:1.5px solid var(--jade);
+    border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    color:var(--jade);
+    font-size:26px; font-weight:500;
+    box-shadow:0 0 0 4px rgba(47,111,94,.08);
+  }
+
+  .greeting{
+    font-size:15px;
+    color:var(--jade-deep);
+    letter-spacing:.04em;
+    margin-bottom:6px;
+  }
+  .greeting .en{
+    display:block;
+    font-size:11.5px;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:var(--gold);
+    margin-top:3px;
+  }
+
+  .subtitle{
+    font-size:13.5px;
+    color:var(--ink-mute);
+    margin-top:18px;
+    letter-spacing:.02em;
+  }
+
+  .hero{ margin:6px 0 4px; }
+  .hero .amount{
+    font-size:clamp(44px,12vw,64px);
+    font-weight:500;
+    line-height:1.05;
+    color:var(--ink);
+    font-feature-settings:"tnum" 1;
+    letter-spacing:-.01em;
+  }
+  .hero .amount .unit{
+    font-size:.42em;
+    color:var(--jade);
+    margin-right:.18em;
+    vertical-align:.06em;
+    letter-spacing:.02em;
+  }
+  .hero .currency-zh{
+    font-size:13px;
+    color:var(--ink-mute);
+    letter-spacing:.16em;
+    margin-top:2px;
+  }
+
+  .divider{
+    height:1px;
+    background:linear-gradient(90deg,transparent,var(--line) 18%,var(--line) 82%,transparent);
+    margin:26px 4px 22px;
+  }
+
+  .meta{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:18px 14px;
+    text-align:left;
+  }
+  .meta .item{ }
+  .meta .item.full{ grid-column:1 / -1; text-align:center; }
+  .meta .k{
+    font-size:11px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--gold);
+    margin-bottom:4px;
+  }
+  .meta .k .zh{ font-size:12.5px; letter-spacing:.06em; text-transform:none; color:var(--ink-mute); margin-right:6px; }
+  .meta .v{
+    font-size:18px;
+    color:var(--ink);
+    font-feature-settings:"tnum" 1;
+  }
+  .meta .v small{ font-size:12px; color:var(--ink-mute); }
+
+  .updated{
+    margin-top:24px;
+    font-size:12.5px;
+    color:var(--ink-mute);
+    letter-spacing:.02em;
+  }
+  .updated b{ color:var(--jade-deep); font-weight:500; }
+
+  .note{
+    margin-top:18px;
+    font-size:14px;
+    font-style:italic;
+    color:var(--ink);
+    line-height:1.6;
+  }
+
+  footer{
+    margin-top:26px;
+    padding-top:16px;
+    border-top:1px solid var(--line);
+    font-family:"Noto Serif TC",serif;
+    font-size:10.5px;
+    color:var(--ink-mute);
+    line-height:1.7;
+    letter-spacing:.02em;
+  }
+  footer a{ color:var(--jade); text-decoration:none; border-bottom:1px dotted var(--jade); }
+
+  .rate-stale{ color:var(--gold)!important; }
+
+  /* loading shimmer */
+  .loading .amount,.loading .meta .v{
+    color:transparent!important;
+    background:linear-gradient(100deg,var(--paper-2) 30%,#f6efe0 50%,var(--paper-2) 70%);
+    background-size:200% 100%;
+    border-radius:6px;
+    animation:shimmer 1.4s infinite;
+    -webkit-background-clip:text; background-clip:text;
+  }
+  @keyframes shimmer{ 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+  /* entrance */
+  .reveal{ opacity:0; transform:translateY(10px); animation:rise .8s cubic-bezier(.2,.7,.2,1) forwards; }
+  @keyframes rise{ to{ opacity:1; transform:none; } }
+
+  @media (prefers-reduced-motion:reduce){
+    .reveal{ animation:none; opacity:1; transform:none; }
+    .loading .amount,.loading .meta .v{ animation:none; }
+  }
+
+  @media (max-width:430px){
+    .card{ padding:38px 24px 24px; }
+  }
+</style>
+</head>
+<body>
+  <main class="card loading" id="card">
+    <div class="seal reveal" style="animation-delay:.05s">存</div>
+
+    <div class="greeting reveal" id="greeting" style="animation-delay:.12s"></div>
+
+    <div class="subtitle reveal" id="subtitle" style="animation-delay:.2s"></div>
+
+    <div class="hero reveal" style="animation-delay:.28s">
+      <div class="amount" id="ntdAmount"><span class="unit">NT$</span><span id="ntdValue">0</span></div>
+      <div class="currency-zh">新台幣 · New Taiwan Dollar</div>
+    </div>
+
+    <div class="divider reveal" style="animation-delay:.36s"></div>
+
+    <div class="meta reveal" style="animation-delay:.44s">
+      <div class="item">
+        <div class="k"><span class="zh">原始金額</span>Saved in EUR</div>
+        <div class="v" id="eurValue">€0</div>
+      </div>
+      <div class="item">
+        <div class="k"><span class="zh">即時匯率</span>Live rate</div>
+        <div class="v" id="rateValue">—</div>
+      </div>
+      <div class="item full">
+        <div class="k"><span class="zh">匯率更新</span>Rate updated</div>
+        <div class="v" id="rateTime" style="font-size:14px;color:var(--ink-mute)">—</div>
+      </div>
+    </div>
+
+    <div class="updated reveal" id="updated" style="animation-delay:.52s"></div>
+
+    <div class="note reveal" id="note" style="animation-delay:.58s"></div>
+
+    <footer class="reveal" style="animation-delay:.66s">
+      <div id="revolutNote"></div>
+      <div>匯率資料 / Rates By <a href="https://www.exchangerate-api.com" target="_blank" rel="noopener">Exchange Rate API</a></div>
+    </footer>
+  </main>
+
+<script>
+/* =================================================================
+   ⚙️  CONFIG  —  改這裡 / EDIT HERE
+   =================================================================
+   每次你存了更多錢，就更新下面兩個數字：
+   Whenever you save more, just update the two numbers below:
+     • savingsEur   = 你目前存了多少歐元 (your current EUR balance)
+     • lastUpdated  = 你更新的日期 (the date you updated it), YYYY-MM-DD
+   ----------------------------------------------------------------- */
+const CONFIG = {
+  savingsEur:  5200,            // ← 你的歐元存款金額 / your EUR savings
+  lastUpdated: "2026-05-29",    // ← 更新日期 / date you updated this
+
+  // 給爸媽的問候語 (可改或留空) / greeting for your parents (edit or leave "")
+  greetingZh:  "親愛的爸爸媽媽",
+  greetingEn:  "For Mom & Dad",
+
+  // 標題 / heading under the greeting
+  subtitleZh:  "我目前為助學貸款存下的金額",
+  subtitleEn:  "What I've saved so far for my student loan",
+
+  // 一句話 (可留空) / a personal line (optional, can be "")
+  note:        "我會繼續努力，請放心 💚",
+
+  // 萬一連不上即時匯率時，暫用的備用匯率 (1 EUR = ? TWD)
+  // fallback rate used ONLY if the live rate can't load
+  fallbackRate: 35.5
+};
+/* ===============  以下不用改  /  NOTHING BELOW NEEDS EDITING  =============== */
+
+// optional URL override for quick testing: savings.html?eur=6000
+const params = new URLSearchParams(location.search);
+const urlEur = parseFloat(params.get("eur"));
+const eur = (!isNaN(urlEur) && urlEur >= 0) ? urlEur : CONFIG.savingsEur;
+
+const $ = id => document.getElementById(id);
+
+const fmtEUR = new Intl.NumberFormat("de-DE", { style:"currency", currency:"EUR", maximumFractionDigits: (eur % 1 === 0 ? 0 : 2) });
+const fmtTWD = new Intl.NumberFormat("zh-Hant-TW", { maximumFractionDigits:0 });
+const fmtRate = new Intl.NumberFormat("en-US", { maximumFractionDigits:3 });
+
+// fill in static text
+$("greeting").innerHTML = CONFIG.greetingZh + (CONFIG.greetingEn ? `<span class="en">${CONFIG.greetingEn}</span>` : "");
+$("subtitle").innerHTML = CONFIG.subtitleZh + (CONFIG.subtitleEn ? "<br>" + CONFIG.subtitleEn : "");
+$("note").textContent = CONFIG.note || "";
+$("eurValue").textContent = fmtEUR.format(eur);
+
+// 顯示金額更新日期 / show the date the EUR amount was last set
+(function(){
+  const d = new Date(CONFIG.lastUpdated + "T00:00:00");
+  const valid = !isNaN(d);
+  const zhDate = valid ? `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日` : CONFIG.lastUpdated;
+  $("updated").innerHTML = `金額更新於 <b>${zhDate}</b> · last counted on ${valid ? d.toISOString().slice(0,10) : CONFIG.lastUpdated}`;
+})();
+
+$("revolutNote").textContent = "金額由本人手動更新自 Revolut 帳戶 · Balance updated manually from Revolut";
+
+function animateCount(el, to){
+  const reduce = window.matchMedia("(prefers-reduced-motion:reduce)").matches;
+  if (reduce || to <= 0){ el.textContent = fmtTWD.format(Math.round(to)); return; }
+  const dur = 1100, start = performance.now();
+  function step(now){
+    const p = Math.min(1, (now - start) / dur);
+    const eased = 1 - Math.pow(1 - p, 3);
+    el.textContent = fmtTWD.format(Math.round(to * eased));
+    if (p < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+function render(rate, updatedText, stale){
+  const ntd = eur * rate;
+  $("rateValue").innerHTML = `1 € = <small>NT$</small> ${fmtRate.format(rate)}`;
+  $("rateTime").textContent = updatedText;
+  if (stale) $("rateTime").classList.add("rate-stale");
+  $("card").classList.remove("loading");
+  // small delay so the entrance settles before counting
+  setTimeout(() => animateCount($("ntdValue"), ntd), 300);
+}
+
+async function loadRate(){
+  try{
+    const res = await fetch("https://open.er-api.com/v6/latest/EUR", { cache:"no-store" });
+    if(!res.ok) throw new Error("bad status");
+    const data = await res.json();
+    const rate = data && data.rates && data.rates.TWD;
+    if(!rate) throw new Error("no TWD");
+    let when = data.time_last_update_utc || "";
+    // tidy up the date string a little
+    if(when) when = when.replace(/\s*\+0000.*$/, " UTC");
+    render(rate, when || "即時匯率 / live", false);
+  }catch(e){
+    // graceful fallback — page still looks complete
+    render(CONFIG.fallbackRate, "⚠ 暫時無法取得即時匯率，使用約略匯率 / live rate unavailable — showing approximate", true);
+  }
+}
+
+loadRate();
+</script>
+</body>
+</html>
